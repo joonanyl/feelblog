@@ -19,5 +19,16 @@ cd ..
 cd back
 node index
 ```
-Improved tables:
-create table users ( id varchar(255) not null, username varchar(255) not null, password varchar(150) not null, registered datetime, last_login datetime, primary key(id) );
+## Improved SQL-tables:
+```
+create table users ( id varchar(255) not null, username varchar(255) not null, password varchar(255) not null, registered datetime, last_login datetime, primary key(id) );
+```
+```
+create unique index username on users (username);
+```
+```
+create table posts (id int not null auto_increment primary key, title varchar(255) not null, content text, emotion varchar(255), date timestamp not null default current_timestamp(), username varchar(255) not null, foreign key(username) references users(username));
+```
+```
+create table users_data( id int not null auto_increment primary key, name varchar(50), email varchar(100), phone varchar(20), hobbies varchar(255), date timestamp not null default CURRENT_TIMESTAMP(), username varchar(255) not null, foreign key (username) references users(username) );
+```
