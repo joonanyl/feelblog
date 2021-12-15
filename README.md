@@ -18,3 +18,6 @@ npm run serve
 cd ..
 cd back
 node index
+```
+Improved tables:
+create table users ( id varchar(255) not null, username varchar(255) not null, password varchar(150) not null, registered datetime, last_login datetime, primary key(id) );
