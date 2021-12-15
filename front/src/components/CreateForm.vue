@@ -53,7 +53,7 @@ export default {
           { emotion: "Surprised"},
           { emotion: "Angry" }
         ],
-        writer: this.$store.getters.getUser.username,
+        username: this.$store.getters.getUser.username,
         selectedEmotion: null,
         msg: ""
     }
@@ -63,7 +63,7 @@ export default {
       console.log(this.title)
       console.log(this.content)
       console.log(this.selectedEmotion.emotion)
-      console.log(this.writer)
+      console.log(this.username)
       console.log(this.date)
 
       try {
@@ -71,7 +71,7 @@ export default {
           title: this.title,
           content: this.content,
           emotion: this.selectedEmotion.emotion,
-          writer: this.writer
+          //username: this.username
         }
         const response = await AuthService.createPost(post)
         this.msg = response.msg
