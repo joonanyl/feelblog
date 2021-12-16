@@ -113,7 +113,6 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
 });
 
 router.post("/create", userMiddleware.isLoggedIn, (req, res, next) => {
-  console.log(req.userData);
   db.query(
     `INSERT INTO posts (title, content, emotion, writer, date) VALUES (${db.escape(req.body.title)}, ${db.escape(req.body.content)},
      ${db.escape(req.body.emotion)}, ${db.escape(req.body.writer)}, now())`,

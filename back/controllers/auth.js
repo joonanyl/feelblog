@@ -91,9 +91,7 @@ exports.login = async (req, res) => {
                 } else{
                     const id = resp[0].id;
                     const username = resp[0].username;
-                    const token = createAccessCookie(id, username, res);
-
-                    console.log(res)
+                    const token = createAccessToken(id, username);
 
                     const updateLoginDateQ = "UPDATE users SET last_login = now() WHERE username = ?";
                     await db.makeQuery(updateLoginDateQ, username);
@@ -134,18 +132,18 @@ exports.login = async (req, res) => {
  */
 exports.isLoggedIn = async (req, res, next) => {
     //If req has cookie jwt (created with logging in)
-    if(req.cookies.jwt){
+    if(req.headers.authorization){
         try{
-            //Convert cookie to json
-            const decoded = await promisify(jwt.verify)(req.cookies.jwt, jwtSecret);
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = await promisify(jwt.verify)(token, jwtSecret);
 
             try{
-                const selectNameQ = "SELECT name, username FROM users_data WHERE username = ?";
+                const selectNameQ = "SELECT username FROM users_data WHERE username = ?";
                 const result = await db.makeQuery(selectNameQ, decoded.username);
 
                 //if user with that login(=id here) exists, save his data to the req obj
                 if(result){
-                    req.result = result[0];
+                    req.result = decoded;
                 } else{
                     console.log("No user found");
                 }
@@ -163,57 +161,10 @@ exports.isLoggedIn = async (req, res, next) => {
     next();
 }
 
-/**
- * Function returns user login in case if he is logged in.
- * In case then user wiped all cookies, this function will return error.
- * Function also prints helpful hints to server console in case of problems.
- * @param req request object from the previous function
- * @param res response object from the previous function
- * @param next next function for passing data forward
- * @returns {Promise} user's login or nothing in case of error
- */
-exports.getLogin = async (req, res, next) => {
-    if(req.cookies.jwt){
-        try{
-            const decoded = await promisify(jwt.verify)(req.cookies.jwt, jwtSecret);
-            req.username = decoded.username;
-        }catch(e){
-            console.log("Problems with getting cookie");
-            console.log(e);
-        }
-    }
-
-    next();
-}
-
-/**
- * Function logs out user and redirects to him to home page.
- * @param req request object from the previous function
- * @param res response object from the previous function
- * @returns {Promise} nothing
- */
-exports.logout = (req, res) => {
-    //The cookie will expire in 2 s = will be removed from browser
-    res.cookie("jwt", "logout", {
-        expires: new Date(Date.now() + 2*1000),
-        httpOnly: true
-    });
-
-    res.status(200).redirect("/");
-}
-
-function createAccessCookie(id, username, res) {
-    const token = jwt.sign({ id: id, username: username }, jwtSecret, {
+function createAccessToken(id, username) {
+    return jwt.sign({ id: id, username: username }, jwtSecret, {
         expiresIn: "30d"
     });
-
-    const cookieOptions = {
-        expires: new Date( Date.now() + 30*24*60*60*1000 ),
-        httpOnly: true
-    };
-    res.cookie('jwt', token, cookieOptions);
-
-    return token;
 }
 
 function convertArrToStr(arr) {

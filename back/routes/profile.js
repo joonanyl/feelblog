@@ -5,11 +5,11 @@ const { param, body} = require("express-validator");
 
 const router = express.Router();
 
-router.get("/information", authController.getLogin, profileController.getUserData, (req, res) => {
+router.get("/information", authController.isLoggedIn, profileController.getUserData, (req, res) => {
     sendDataToClient(req, res);
 });
 
-router.get("/myposts", authController.getLogin, profileController.getUserPosts, (req, res) => {
+router.get("/myposts", authController.isLoggedIn, profileController.getUserPosts, (req, res) => {
     sendDataToClient(req, res);
 });
 
@@ -22,7 +22,7 @@ router.post("/myposts", authController.isLoggedIn, [
     sendQueryStatus(req, res);
 });
 
-router.get("/myposts/:id", authController.getLogin, [
+router.get("/myposts/:id", authController.isLoggedIn, [
     param("id", "id must be an integer").trim().isInt(),
 ], profileController.getUserPost, (req, res) => {
     sendDataToClient(req, res);
@@ -44,7 +44,7 @@ router.delete("/myposts/:id", authController.isLoggedIn,  [
 });
 
 //User personal data CRUD (reading and updating only)
-router.get("/information/:property", authController.getLogin, [
+router.get("/information/:property", authController.isLoggedIn, [
     param("property", "Property can not contain special characters").blacklist(" =<>$|+?,!{}").escape(),
 ], profileController.getUserProperty, (req, res) => {
     sendDataToClient(req, res);
@@ -66,11 +66,12 @@ function sendDataToClient(req, res) {
     } else if(req.errors){
         res.json({
             isSuccess: false,
-            errors: req.errors
+            msg: convertArrToStr(req.errors)
         });
     } else{
         res.json({
-            isSuccess: false
+            isSuccess: false,
+            msg: "Something went wrong"
         });
     }
     res.end();
@@ -80,14 +81,28 @@ function sendQueryStatus(req, res){
     if(req.errors){
         res.json({
             isSuccess: false,
-            errors: req.errors
+            msg: convertArrToStr(req.errors)
         });
-    } else {
+    } else if(!req.isSuccess){
         res.json({
-            isSuccess: req.isSuccess
+            isSuccess: false,
+            msg: "Something went wrong"
+        });
+    } else{
+        res.json({
+            isSuccess: true,
+            msg: "Success"
         });
     }
     res.end();
+}
+
+function convertArrToStr(arr) {
+    let result = "";
+    for(let i=0; i<arr.length; i++){
+        result += arr[i].msg + ". ";
+    }
+    return result;
 }
 
 module.exports = router;

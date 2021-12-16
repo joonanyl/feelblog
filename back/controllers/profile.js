@@ -39,8 +39,6 @@ exports.getUserPosts = async (req, res, next) => {
  * @returns {Promise<void>}
  */
 exports.createPost = async (req, res, next) => {
-    console.log(req.result)
-    console.log(req.cookies.jwt)
     const errors = validationResult(req);
     if(errors.isEmpty()){
         try{
@@ -51,11 +49,11 @@ exports.createPost = async (req, res, next) => {
                 return;
             } else{
                 console.log("No values or id defined");
-                setChangeDBRowUnsuccessful(req);
+                req.isSuccess = false;
             }
         }catch(e){
             console.log("Problems with req object");
-            setChangeDBRowUnsuccessful(req);
+            req.isSuccess = false;
         }
     }else{
         failedValidationRes(req, errors);
@@ -107,11 +105,11 @@ exports.updateUserPost = async (req, res, next) => {
                 return;
             } else{
                 console.log("No values or id defined");
-                setChangeDBRowUnsuccessful(req);
+                req.isSuccess = false;
             }
         }catch(e){
             console.log("Problems with req object");
-            setChangeDBRowUnsuccessful(req);
+            req.isSuccess = false;
         }
     }else{
         failedValidationRes(req, errors);
@@ -141,11 +139,11 @@ exports.deleteUserPost = (req, res, next) => {
                 return;
             } else{
                 console.log("No id defined");
-                setChangeDBRowUnsuccessful(req);
+                req.isSuccess = false;
             }
         }catch(e){
             console.log("Problems with req object");
-            setChangeDBRowUnsuccessful(req);
+            req.isSuccess = false;
         }
     }else{
         failedValidationRes(req, errors);
@@ -197,11 +195,11 @@ exports.updateUserProperty = async (req, res, next) => {
                 return;
             } else{
                 console.log("No value or id defined");
-                setChangeDBRowUnsuccessful(req);
+                req.isSuccess = false;
             }
         }catch(e){
             console.log("Problems with req object");
-            setChangeDBRowUnsuccessful(req);
+            req.isSuccess = false;
         }
     } else{
         failedValidationRes(req, errors);
@@ -212,30 +210,34 @@ exports.updateUserProperty = async (req, res, next) => {
 
 async function sendProfileData(req, next, selectQ, param) {
     try{
-        const username = req.username;
+        const username = req.result.username;
 
-        try{
-            const selectLoginQ = "SELECT username FROM users WHERE username = ?";
-            const resp = await db.makeQuery(selectLoginQ, username);
-            const isUserExist = resp.length !== 0;
+        if(username){
+            try{
+                const selectLoginQ = "SELECT username FROM users WHERE username = ?";
+                const resp = await db.makeQuery(selectLoginQ, username);
+                const isUserExist = resp.length !== 0;
 
-            let params = [username];
-            if(param){
-                params.push(param);
-            }
+                let params = [username];
+                if(param){
+                    params.push(param);
+                }
 
-            if(isUserExist){
-                req.result = await db.makeQuery(selectQ, params);
-                req.isSuccess = true;
-            } else {
-                console.log("User is not exist or login is wrong");
+                if(isUserExist){
+                    req.result = await db.makeQuery(selectQ, params);
+                    req.isSuccess = true;
+                } else {
+                    console.log("User is not exist or login is wrong");
+                    req.isSuccess = false;
+                }
+            }catch (e){
+                console.log("Problems with DB connection");
                 req.isSuccess = false;
             }
-        }catch (e){
-            console.log("Problems with DB connection");
+        } else{
+            console.log("User is not logged in");
             req.isSuccess = false;
         }
-
     } catch (e){
         console.log("Problems with req object");
         req.isSuccess = false;
@@ -248,7 +250,6 @@ async function changeDBRow(req, res, next, sqlQ, params) {
     if(!req.result){
         console.log("User is not logged in");
         req.isSuccess = false;
-        req.logout = true;
     } else{
         try{
             const username = req.result.username;
@@ -257,23 +258,17 @@ async function changeDBRow(req, res, next, sqlQ, params) {
             const result = await db.makeQuery(sqlQ, params);
             if(result.affectedRows === 1){
                 req.isSuccess = true;
-                req.logout = false;
             } else {
-                setChangeDBRowUnsuccessful(req);
+                req.isSuccess = false;
             }
         }catch (e){
             console.log("Problems with DB connection or req object");
             console.log(e);
-            setChangeDBRowUnsuccessful(req);
+            req.isSuccess = false;
         }
     }
 
     next();
-}
-
-function setChangeDBRowUnsuccessful(req) {
-    req.isSuccess = false;
-    req.logout = false;
 }
 
 function failedValidationRes(req, errors) {
