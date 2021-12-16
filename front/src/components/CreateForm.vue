@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import AuthService from '../services/AuthService'
+import ProfileService from '../services/ProfileService'
+//import PostService from "../services/PostService";
 export default {
   data() {
     return {
@@ -71,9 +72,46 @@ export default {
           title: this.title,
           content: this.content,
           emotion: this.selectedEmotion.emotion,
-          //username: this.username
+          //username: this.username - no need
         }
-        const response = await AuthService.createPost(post)
+
+        const response = await ProfileService.createPost(post);
+
+        //REST using examples:
+
+        //get post by id (only, which was created by current user)
+        //const response = await ProfileService.getPostById(2);
+
+        //delete post
+        //const response = await ProfileService.deletePostById(1)
+
+        //update post
+        //const response = await ProfileService.updatePostById(1, post)
+
+        //get all user data (email, phone etc.)
+        //const response = await ProfileService.getAllData();
+
+        //get user property (as email, phone etc.)
+        //const response = await ProfileService.getPropertyByName("username");
+        //const property = response.result[0].username;
+
+        //update user property (as email, phone etc.)
+        //const response = await ProfileService.updatePropertyByName("email", "test@mail.fi");
+
+        //get all existing posts (no login needed)
+        //const response = await PostService.getAllPosts();
+
+        //search posts by title
+        //const response = await PostService.searchPostsByTitle("l");
+
+        //search posts by title
+        //const response = await PostService.searchPostsByAuthor("username");
+
+        //search posts by date of creation, function can make search with these params:
+        // ("2021-12-16", "") from, ("", "2021-12-16") to, ("2021-12-16", "2021-12-17") from to
+        //You can use html <input type="date"> for auto generating right dates
+        //const response = await PostService.searchPostsByDate("2021-12-16", "2021-12-18");
+
         this.msg = response.msg
         this.$router.push('/')
       } catch (err) {

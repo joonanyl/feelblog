@@ -112,6 +112,7 @@ exports.updateUserPost = async (req, res, next) => {
             req.isSuccess = false;
         }
     }else{
+        console.log(errors)
         failedValidationRes(req, errors);
     }
 
@@ -166,7 +167,7 @@ exports.getUserProperty = (req, res, next) => {
     const errors = validationResult(req);
     if(errors.isEmpty()){
         const property = req.params.property;
-        const selectQ = `SELECT ${property} FROM users_data WHERE (login = ?)`;
+        const selectQ = `SELECT ${property} FROM users_data WHERE (username = ?)`;
         sendProfileData(req, next, selectQ, property);
     } else{
         failedValidationRes(req, errors);
@@ -189,7 +190,7 @@ exports.updateUserProperty = async (req, res, next) => {
         try {
             const property = req.params.property;
             const value = req.body.value;
-            const updateQ = `UPDATE users_data SET ${property} = ? WHERE login = ?`;
+            const updateQ = `UPDATE users_data SET ${property} = ? WHERE username = ?`;
             if(property && value){
                 changeDBRow(req, res, next, updateQ, [value]);
                 return;

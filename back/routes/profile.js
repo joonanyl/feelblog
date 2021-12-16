@@ -30,8 +30,8 @@ router.get("/myposts/:id", authController.isLoggedIn, [
 
 router.put("/myposts/:id", authController.isLoggedIn, [
     param("id", "id must be an integer").trim().isInt(),
-    body("name", "Name must be at least 3 symbols long").trim().escape().isLength({min: 3}),
-    body("name", "Name can not be empty").notEmpty({ignore_whitespace: true}),
+    body("title", "Name must be at least 3 symbols long").trim().escape().isLength({min: 3}),
+    body("title", "Name can not be empty").notEmpty({ignore_whitespace: true}),
     body("content").trim()
 ], profileController.updateUserPost, (req, res) => {
     sendQueryStatus(req, res);

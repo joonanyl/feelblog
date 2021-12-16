@@ -11,11 +11,5 @@ export default {
     },
     getSecretContent() {
         return axios.get(url + 'secret-route/').then(response => response.data)
-    },
-    getPosts() {
-        return axios.get(url + 'posts/').then(response => response.data)
-    },
-    createPost(post) {
-        return axios.post(url + 'profile/myposts/', post).then(response => response.data)
     }
 }

@@ -20,6 +20,4 @@ router.post("/login", [
     body("password", "Wrong password").blacklist(" ").notEmpty({ignore_whitespace: true})
 ], authController.login);
 
-router.get("/logout", authController.logout);
-
 module.exports = router;

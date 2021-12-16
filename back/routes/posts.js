@@ -5,7 +5,7 @@ const { query } = require("express-validator");
 const router = express.Router();
 
 router.get("/", [
-    query("name").optional({checkFalsy: true}).trim().escape(),
+    query("title").optional({checkFalsy: true}).trim().escape(),
     query("author").optional({checkFalsy: true}).trim().escape(),
     query("start").optional({checkFalsy: true}).trim().escape().isDate(),
     query("end").optional({checkFalsy: true}).trim().escape().isDate(),

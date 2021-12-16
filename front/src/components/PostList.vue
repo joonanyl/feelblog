@@ -1,7 +1,7 @@
 <template>
   <v-container class="my-10">
     <PostCard
-      v-for="post in posts.slice().reverse()"
+      v-for="post in posts"
       :key="post.title"
       :title="post.title"
       :writer="post.writer"
@@ -15,7 +15,7 @@
 
 <script>
 import PostCard from "./PostCard.vue";
-import AuthService from "../services/AuthService";
+import PostService from "../services/PostService";
 
 export default {
   data: () => ({
@@ -25,7 +25,9 @@ export default {
     PostCard,
   },
   async created() {
-    this.posts = await AuthService.getPosts()
+    //resp.result - array with objects, resp.isSuccess - boolean, status of operation
+    const resp = await PostService.getAllPosts();
+    this.posts = resp.result
   },
 };
 </script>
