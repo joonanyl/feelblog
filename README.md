@@ -1,4 +1,4 @@
-# feelblog
+# FeelBlog
 A blog where you can post about things you care about and tag them with an emotion.
 
 
