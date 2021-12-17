@@ -33,6 +33,7 @@ create table posts (id int not null auto_increment primary key, title varchar(25
 create table users_data( id int not null auto_increment primary key, name varchar(50), email varchar(100), phone varchar(20), hobbies varchar(255), date timestamp not null default CURRENT_TIMESTAMP(), username varchar(255) not null, foreign key (username) references users(username) );
 ```
 ## REST API
+1. API paths:
 
 | Action | Path | Method | URL example |
 | -------- | ---- | ----- | ------ |
@@ -50,3 +51,22 @@ create table users_data( id int not null auto_increment primary key, name varcha
 | posts searching by title | posts?title={search word} | GET | http://localhost:8081/posts?title="my_post" |
 | posts searching by author | posts?author={search word} | GET | http://localhost:8081/posts?title="john" |
 | posts searching in time frame | posts?start={from date}&end={to date} | GET | http://localhost:8081/posts?start="2021-03-01"&end="2021-04-10" |
+
+2. API objects:
+
+| Action | Path | Request object example | Response object example |
+| -------- | ---- | ----- |  ----- |
+| user registration | auth/register | { username: "john", password: "admin", name: "John Smith", email: "john@mail.com", phone: "+123456789", hobbies: "swimming, programming" } | { msg: "Registered!" } |
+| user logging in | auth/login | { username: "john", password: "admin" } | { msg: "Logged in!", token: "generated access token",  user: { id: "generated unique id", username: "john", password: "hashed password", registered: "2021-03-01", last_login: "2021-04-23" } } |
+| all user's posts getting | profile/myposts | | { isSuccess: true, result: [ 0: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} ] } |
+| new post creation | profile/myposts | { title: "my post", content: "Some text here", emotion: "happy" } | { isSuccess: true, msg: "Success" } |
+| post getting | profile/myposts/{id} | | { isSuccess: true, result: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} } |
+| post changing | profile/myposts/{id} | { title: "my post", content: "Some text here", emotion: "happy" } | { isSuccess: true, msg: "Success" } |
+| post removing | profile/myposts/{id} | | { isSuccess: true, msg: "Success" } |
+| all user's information getting | profile/information | | { isSuccess: true, result: {id: 1, name: "John Smith", email: "john@mail.com", phone: "+123456789", hobbies: "swimming, programming", date: "2021-12-15 17:35:26", username: "john"} } |
+| concrete user's information getting | profile/information/{property} | { isSuccess: true, result: {email: "john@mail.com"} } |
+| concrete user's information changing | profile/information/{property} | {value: "email"}| { isSuccess: true, msg: "Success" } |
+| all existing posts getting | posts |  | { isSuccess: true, result: [ 0: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} ] } |
+| posts searching by title | posts?title={search word} | | { isSuccess: true, result: [ 0: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} ] } |
+| posts searching by author | posts?author={search word} | | { isSuccess: true, result: [ 0: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} ] } |
+| posts searching in time frame | posts?start={from date}&end={to date} |  | { isSuccess: true, result: [ 0: {id: 1, title: "my post", content: "Some text here", emotion: "happy", date: "2021-04-23", username: "john"} ] } |
