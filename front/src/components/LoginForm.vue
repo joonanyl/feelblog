@@ -35,6 +35,7 @@ export default {
     return {
       username: "",
       password: "",
+      msg: ""
     };
   },
   methods: {

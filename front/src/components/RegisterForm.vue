@@ -5,11 +5,10 @@
         >Register an account</v-card-title
       >
 
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form ref="form" lazy-validation>
         <v-text-field
           v-model="username"
           :counter="10"
-          :rules="usernameRules"
           label="Username"
           prepend-inner-icon="mdi-account"
           required

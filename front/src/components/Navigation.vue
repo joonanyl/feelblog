@@ -20,8 +20,8 @@
       <v-list>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title :key="componentKey" class="text-h5">Hello {{ username }}</v-list-item-title>
-            <v-list-item-subtitle :key="componentKey">@{{ username }}</v-list-item-subtitle>
+            <v-list-item-title class="text-h5">Hello {{ username }}</v-list-item-title>
+            <v-list-item-subtitle>@{{ username }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -70,14 +70,13 @@ export default {
       sidebar: false,
       links: [
         { icon: "mdi-note-plus", text: "Write a post", route: "/create" },
-        { icon: "mdi-cog", text: "Settings", route: "/settings" },
+        { icon: "mdi-account", text: "Account", route: "/account" },
       ],
       accountLinks: [
         { icon: "mdi-logout", text: "Logout" },
         { icon: "mdi-login", text: "Login", route: "/login"},
       ],
       username: '',
-      componentKey: 0
     }
   },
   async created() {
