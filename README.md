@@ -1,5 +1,5 @@
 # FeelBlog
-A blog where you can post about things you care about and tag them with an emotion.
+A blog where you can post about things you care about and tag them with an emotion. Built with Vue using Vuetify, ExpressJS & nodeJS.
 
 ## Create SQL-tables:
 ```
